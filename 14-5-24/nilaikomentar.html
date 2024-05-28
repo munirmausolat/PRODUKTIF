@@ -1,0 +1,175 @@
+<!DOCTYPE html> <!-- Mendefinisikan tipe dokumen sebagai HTML5 -->
+<html lang="en"> <!-- Menentukan bahasa utama dokumen sebagai bahasa Inggris -->
+<head>
+   <!-- Mengatur karakter encoding dan skala viewport untuk memastikan kompatibilitas dan responsivitas -->
+    <style>
+        /* Mengatur tampilan tabel */
+        table {
+            border-collapse: collapse; /* Menggabungkan batas tabel menjadi satu garis */
+        }
+
+        th {
+            border: 1px solid #ddd; /* Mengatur batas kolom header */
+            padding: 8px; /* Menambahkan ruang di dalam sel */
+            text-align: left; /* Mengatur teks agar rata kiri */
+            background-color: aqua; /* Mengatur warna latar belakang kolom header */
+        }
+
+        td {
+            border: 1px solid #ddd; /* Mengatur batas kolom */
+            padding: 8px; /* Menambahkan ruang di dalam sel */
+            text-align: left; /* Mengatur teks agar rata kiri */
+        }
+    </style>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet"/>
+    <!-- Menghubungkan ke file CSS eksternal Tailwind CSS untuk tambahan styling -->
+    <title>Nilai</title> <!-- Menentukan judul dokumen -->
+</head>
+<body class="w-full flex flex-col justify-center items-center font-mono">
+<!-- Mengatur styling dasar halaman dengan kelas Tailwind CSS -->
+<h1 class="my-5 mt-20 text-2xl">Menghitung Indeks Prestasi</h1> <!-- Judul halaman -->
+<h1 id="notify" class="my-5 px-2 text-sm text-gray-800 bg-red-300 rounded-md hidden"></h1>
+<!-- Elemen untuk menampilkan notifikasi error -->
+<h1 id="credit" class="my-2 px-2 text-sm text-gray-800 bg-green-300 rounded-md hidden"></h1>
+<!-- Elemen untuk menampilkan credit -->
+<table onsubmit="return">
+    <!-- Tabel input nilai dan hasil -->
+    <tr>
+        <th>Komponen</th> <!-- Kolom untuk Komponen -->
+        <th>Bobot</th> <!-- Kolom untuk Bobot -->
+        <th>Nilai</th> <!-- Kolom untuk Nilai -->
+    </tr>
+    <tr>
+        <td>Quis</td> <!-- Kolom untuk Quis -->
+        <td>10%</td> <!-- Kolom untuk bobot Quis -->
+        <td><input class="w-full px-2 rounded-md" min="0" max="100" type="number" name="quis" id="quis"
+                   onchange="calculate()" placeholder="masukkan nilai"></td>
+        <!-- Input nilai Quis. onChange untuk mengupdate kalkulasi dari nilai -->
+    </tr>
+    <tr>
+        <td>Tugas</td> <!-- Kolom untuk Tugas -->
+        <td>20%</td> <!-- Kolom untuk bobot Tugas -->
+        <td><input class="w-full px-2 rounded-md" min="0" max="100" type="number" name="tugas" id="tugas"
+                   onchange="calculate()" placeholder="masukkan nilai"></td>
+        <!-- Input nilai Tugas. onChange untuk mengupdate kalkulasi dari nilai. onchange adalah`onchange` adalah sebuah atribut atau event handler dalam HTML dan JavaScript yang digunakan untuk menangani perubahan pada elemen input, seperti teks, checkbox, dropdown, dan elemen form lainnya. Ketika nilai dari elemen tersebut berubah, fungsi yang terhubung dengan event `onchange` akan dijalankan
+        onkeyup adalah atribut event dalam HTML yang digunakan untuk menjalankan JavaScript ketika sebuah tombol pada keyboard dilepaskan saat fokus berada pada elemen tertentu. Ini sering digunakan pada elemen input untuk memproses input pengguna secara real-time.-->
+    </tr>
+    <tr>
+        <td>UTS</td> <!-- Kolom untuk UTS -->
+        <td>30%</td> <!-- Kolom untuk bobot UTS -->
+        <td><input class="w-full px-2 rounded-md" min="0" max="100" type="number" name="uts" id="uts"
+                   onchange="calculate()" placeholder="masukkan nilai"></td>
+        <!-- Input nilai UTS. onChange untuk mengupdate kalkulasi dari nilai -->
+    </tr>
+    <tr>
+        <td>UAS</td> <!-- Kolom untuk UAS -->
+        <td>40%</td> <!-- Kolom untuk bobot UAS -->
+        <td><input class="w-full px-2 rounded-md" min="0" max="100" type="number" name="uas" id="uas"
+                   onchange="calculate()" placeholder="masukkan nilai"></td>
+        <!-- Input nilai UAS. onChange untuk mengupdate kalkulasi dari nilai -->
+    </tr>
+    <tr>
+        <td colspan="2">Indeks Prestasi</td> <!-- Kolom untuk Indeks Prestasi -->
+        <td id="indeks-presentasi">-</td> <!-- Menampilkan hasil Indeks Prestasi -->
+    </tr>
+    <tr>
+        <td colspan="2">Keterangan</td> <!-- Kolom untuk Keterangan -->
+        <td id="keterangan">Masukkan Value Data</td> <!-- Menampilkan keterangan -->
+    </tr>
+    <tr>
+        <td colspan="2">Nilai Akhir</td> <!-- Kolom untuk Nilai Akhir -->
+        <td id="nilai-akhir">-</td> <!-- Menampilkan hasil Nilai Akhir -->
+    </tr>
+    <tr>
+        <td colspan="3">
+            <button onclick="reset()"
+                    class="w-full transition border-none outline-none hover:bg-gray-500 hover:text-white rounded-md">
+                Reset
+            </button> <!-- Tombol untuk mereset nilai input -->
+        </td>
+    </tr>
+</table>
+</body>
+
+<script>
+    var credit = "Nama"; // Variabel untuk menyimpan credit
+    var creditBool = false; // Boolean untuk mengatur tampilan credit
+
+    function reset() {
+        // Fungsi untuk mereset input dan hasil perhitungan
+        sendError(true); // Menghapus notifikasi error
+        let nilaiQuis = document.getElementById("quis");
+        let nilaiTugas = document.getElementById("tugas");
+        let nilaiUTS = document.getElementById("uts");
+        let nilaiUAS = document.getElementById("uas");
+
+        // Menghapus kelas bg-red-300 dari input nilai
+        nilaiQuis.classList.remove("bg-red-300");
+        nilaiTugas.classList.remove("bg-red-300");
+        nilaiUTS.classList.remove("bg-red-300");
+        nilaiUAS.classList.remove("bg-red-300");
+
+        // Mengatur nilai input menjadi kosong
+        document.getElementById("quis").value = "";
+        document.getElementById("tugas").value = "";
+        document.getElementById("uts").value = "";
+        document.getElementById("uas").value = "";
+
+        // Mengatur nilai akhir dan indeks prestasi menjadi default
+        document.getElementById("nilai-akhir").textContent = "-";
+        document.getElementById("indeks-presentasi").textContent = "-";
+        document.getElementById("keterangan").textContent = "Berhasil Direset";
+    }
+
+    // Fungsi untuk menampilkan notifikasi error
+    function sendError(message) {
+        const elmt = document.getElementById("notify");
+
+        // Menyembunyikan atau menampilkan notifikasi berdasarkan pesan
+        message === true || message === "" ? (
+            elmt.classList.add("hidden")
+        ) : (
+            elmt.classList.remove("hidden"),
+                elmt.innerText = message
+        );
+    }
+
+    // Fungsi untuk mengecek validitas nilai input
+    function isCancelled() {
+        let nilaiQuis = document.getElementById("quis");
+        let nilaiTugas = document.getElementById("tugas");
+        let nilaiUTS = document.getElementById("uts");
+        let nilaiUAS = document.getElementById("uas");
+
+        let result = false; // Variabel untuk menandai apakah ada error
+        let listError = []; // Array untuk menyimpan pesan error
+
+        // Mengecek setiap nilai input
+        [nilaiQuis, nilaiTugas, nilaiUTS, nilaiUAS].forEach((nilai) => {
+            nilai.value === "" ? (nilai.classList.add("bg-red-300"), listError.push(`nilai ${nilai.id} kosong`)) : null;
+            +nilai.value > 100 ? (nilai.classList.add("bg-red-300"), listError.push(`${nilai.id} lebih dari 100`)) : null;
+            +nilai.value < 0 ? (nilai.classList.add("bg-red-300"), listError.push(`${nilai.id} kurang dari 0`)) : null;
+            +nilai.value >= 0 && +nilai.value <= 100 ? (nilai.classList.remove("bg-red-300")) : null;
+        });
+
+        // Menampilkan notifikasi error jika ada
+        listError.length > 0 ? (
+            sendError(`Masalah Value: ${listError.join(", ")}`),
+                document.getElementById("nilai-akhir").textContent = "-",
+                document.getElementById("indeks-presentasi").textContent = "-",
+                document.getElementById("keterangan").textContent = "Nilai Invalid",
+                result = true
+        ) : sendError(true);
+
+        return result; // Mengembalikan hasil pengecekan
+    }
+
+    // Fungsi untuk menghitung nilai akhir dan indeks prestasi
+    function calculate() {
+        let creditElmt = document.getElementById("credit");
+        (creditBool ? (
+            creditElmt.classList.remove("hidden"),
+                creditElmt.innerText = "Credit: " + credit
+        ) : null);
+
+        // Mengambil nilai dari input
