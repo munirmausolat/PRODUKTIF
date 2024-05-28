@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembelian Tiket</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .total-price {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pembelian Tiket</h1>
+    <div class="form-group">
+        <label for="tujuan">Pilih Tujuan:</label>
+        <select id="tujuan">
+            <option value="Jakarta-500000">Jakarta - Rp 500,000</option>
+            <option value="Surabaya-400000">Surabaya - Rp 400,000</option>
+            <option value="Bali-600000">Bali - Rp 600,000</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="jumlah">Jumlah Tiket:</label>
+        <input type="number" id="jumlah" value="1" min="1">
+    </div>
+    <div class="total-price" id="totalHarga">Total Harga: Rp 0</div>
+    <div class="purchase-summary" id="hasilPembelian">Hasil Pembelian: </div>
+
+    <script>
+        function hitungTotalHarga() {
+            const tujuanSelect = document.getElementById('tujuan');
+            const jumlahInput = document.getElementById('jumlah');
+            const totalHargaDiv = document.getElementById('totalHarga');
+            const hasilPembelianDiv = document.getElementById('hasilPembelian');
+            
+            const selectedOption = tujuanSelect.value.split('-');
+            const tujuan = selectedOption[0];
+            const hargaPerTiket = parseInt(selectedOption[1]);
+            const jumlahTiket = parseInt(jumlahInput.value);
+            
+            const totalHarga = hargaPerTiket * jumlahTiket;
+            
+            totalHargaDiv.textContent = `Total Harga: Rp ${totalHarga.toLocaleString()}`;
+            hasilPembelianDiv.textContent = `Hasil Pembelian: ${tujuan} x ${jumlahTiket}`;
+        }
+
+        document.getElementById('tujuan').addEventListener('change', hitungTotalHarga);
+        document.getElementById('jumlah').addEventListener('input', hitungTotalHarga);
+
+        // Initial calculation
+        hitungTotalHarga();
+    </script>
+</body>
+</html>
