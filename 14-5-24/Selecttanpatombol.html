@@ -1,0 +1,162 @@
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mata Pelajaran</title>
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <div class="bg-white shadow-md rounded-lg max-w-sm w-full mx-auto p-4 my-5">
+        <div class="text-center">
+            <h2 class="text-xl font-bold">Kurikulum Merdeka</h2>
+            <p class="text-gray-500">Memilih pembelajaran yang diinginkan<br>Minimal 3 Mapel</p>
+        </div>
+        <div class="mt-1 border-t border-gray-200 pt-4 w-full">
+            <div class="mt-1 flex justify-between">
+                <div>
+                    <label for="nama" class="text-gray-600">Nama:</label>
+                    <br>
+                    <input onchange="onChange()" onkeyup="onChange()" class="font-semibold" type="text" name="nama" id="nama" placeholder="Nama Murid">
+                </div>
+            </div>
+            <div class="mt-1 flex justify-between">
+                <div>
+                    <label for="kelas" class="text-gray-600">Kelas:</label>
+                    <br>
+                    <select onchange="onChange()" class="font-semibold" type="text" name="kelas" id="kelas">
+                        <option>Pilih Kelas</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-1 flex justify-between">
+                <div>
+                    <label for="absen" class="text-gray-600">Absen:</label>
+                    <br>
+                    <input onchange="onChange()" onkeyup="onChange()" class="font-semibold" type="number" name="absen" id="absen" placeholder="Absen Murid">
+                </div>
+            </div>
+            <div class="mt-1 flex justify-between w-full">
+                <div class="w-full">
+                    <p class="text-gray-600">Pelajaran:</p>
+                    <div id="pelajaran" class="w-full flex flex-wrap justify-center items-center">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="struk" class="mt-4 flex justify-center items-center border-t border-b border-gray-200 py-4">
+            <div class="flex flex-col items-center">
+                <h1 id="struk-head-title" class="font-semibold">Nusantara School</h1>
+                <h2 id="struk-head-subtitle" class="text-gray-600">Hasil Data dari form diatas</h2>
+                <div id="struk-details" class="w-full">
+                    <div class="pt-1 flex justify-between">
+                    </div>
+                    <p class="tracking-widest">-------------------------------------------</p>
+                    <div class="py-1">
+                        <p class="text-gray-600">Nama:</p>
+                        <p id="struk-nama" class="font-semibold"></p>
+                    </div>
+                    <div class="py-1">
+                        <p class="text-gray-600">Kelas:</p>
+                        <p id="struk-kelas" class="font-semibold"></p>
+                    </div>
+                    <div class="py-1">
+                        <p class="text-gray-600">Absen:</p>
+                        <p id="struk-absen" class="font-semibold"></p>
+                    </div>
+                    <div class="py-1">
+                        <p class="text-gray-600">Pelajaran:</p>
+                        <ul id="struk-pelajaran" class="relative font-semibold list-disc left-5">
+                        </ul>
+                    </div>
+                    <p class="tracking-widest">-------------------------------------------</p>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 text-center">
+            <button onclick="onReset()" class="bg-blue-500 text-white px-4 py-2 rounded">Reset</button>
+        </div>
+    </div>
+    <script>
+        // Minimal Pembelajaran
+        let minimal = 3;
+
+        // List Tiket
+        let kelasList = [
+            "X-RPL'3",
+            "X-RPL'2",
+            "X-RPL'1",
+        ];
+
+        // List Pelajaran
+        let pelajaranList = [
+            "Website Dev",
+            "Informatika",
+            "Matimatika",
+            "Kimia",
+            "Sejarah",
+        ];
+
+        /**Mengupdate/Reset Opsi dan input pada form */
+        function updateInputs() {
+            // Menambahkan Opsi tiket
+            let options = kelasList.map((v) => `<option value="${v}">${v}</option>`);
+            document.getElementById("kelas").innerHTML=options.join();
+
+            // Menambahkan Opsi Pembelajaran
+            let pelajaran = pelajaranList.map((v) => `<div class="m-1 bg-gray-100 flex space-x-2 px-2 rounded-md">
+                <input onchange="onChange()" onclick="onChange()" class="group-hover:hidden" type="checkbox" name="pelajaran-${v}" id="pelajaran-${v}" title="${v}">
+                <p>${v}</p>
+            </div>`);
+            document.getElementById("pelajaran").innerHTML=pelajaran.join("");
+        }
+
+        /**
+        Update Struk
+        @param from - Lokasi Kota Saat Ini. Default: Kaliwunggu
+         */
+        function updateStruk() {
+            // Mengetahui semua Data pada Form Input
+            const nama = document.getElementById("nama")?.value;
+            const kelas = kelasList.find((v) => v === document.getElementById("kelas").value) ?? kelasList[0];
+            const absen = document.getElementById("absen")?.value;
+            let pelajaranChecked = [];
+
+            // Menambahkan Pembelajaran jika value adalah "checked/true"
+            document.getElementById("pelajaran").childNodes.forEach((elmt) => {
+                if (elmt.querySelector("input").checked) {
+                    pelajaranChecked.push(`<li>${elmt.innerText}</li>`);
+                }
+            });
+
+            // Mengetahui apakah form lengkap ato gak
+            if (!nama || !kelas || Number.isNaN(absen) || +absen <= 0 || pelajaranChecked.length < minimal) {
+                document.getElementById("struk").classList.add("hidden");
+                return;
+            }
+
+            // Intinya Set Element ato Memberikan value pada struk
+            document.getElementById("struk-nama").innerHTML=nama;
+            document.getElementById("struk-kelas").innerHTML=kelas;
+            document.getElementById("struk-absen").innerHTML=absen;
+            document.getElementById("struk-pelajaran").innerHTML=pelajaranChecked.join("");
+
+            document.getElementById("struk").classList.remove("hidden");
+        }
+
+        function onChange() {
+            updateStruk();
+        }
+
+        function onReset() {
+            updateInputs();
+            onChange();
+        }
+
+        updateInputs();
+        updateStruk();
+    </script>
+</body>
+</html>
+```
